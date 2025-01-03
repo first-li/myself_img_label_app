@@ -6,6 +6,14 @@ class ProjectData:
 
     def __init__(self):
         """初始化项目数据"""
+        self.VIA_data = None
+        self.region_format = None
+        self.obj_class = None
+        self.one_image_regions = None
+        self.images_dir_path = None
+        self.json_file_path = None
+        self.timestamp = None
+        self.default_project_name = None
         self.refresh()
 
     def refresh(self):

@@ -9,6 +9,7 @@ from src.ui.tool_bar import Toolbar
 
 from src.core.handle_file import FileHandler
 from src.core.project_data import ProjectData
+from src.controllers.signal_manager import SignalManager
 
 from src.controllers.toolbar_controller import ToolbarController
 from src.controllers.image_list_controller import ImageListController
@@ -20,21 +21,40 @@ class MainWindow(QMainWindow):
 
     def __init__(self, config=None):
         super().__init__()
+        self.signal_manager = SignalManager()
         self.project_data = ProjectData()
-        self.file_handler = FileHandler()
+        
+        self.label_list_Widget = LabelListWidget()  # 标签列表组件
+        self.label_list_Widget_controller = LabelListController(
+            self.project_data, 
+            self.label_list_Widget,
+            self.signal_manager
+        )
 
-        self.toolbar = Toolbar()  # 将 Controller 传递给 Toolbar
+        self.file_handler = FileHandler(self.signal_manager)
+        self.toolbar = Toolbar(self.signal_manager)  # 将 signal_manager 传递给 Toolbar
 
         self.image_list_Widget = ImageListWidget()  # 图片列表组件
-        self.image_list_Widget_controller = ImageListController(self.project_data, self.image_list_Widget)
-
-        self.label_list_Widget = LabelListWidget()  # 标签列表组件
-        self.label_list_Widget_controller = LabelListController(self.project_data, self.label_list_Widget)
+        self.image_list_Widget_controller = ImageListController(
+            self.project_data, 
+            self.image_list_Widget,
+            self.signal_manager
+        )
 
         self.canvas_widget = ImageCanvas()  # 画布组件
-        self.canvas_widget_controller = CanvasController(self.project_data, self.canvas_widget)  # 画布组件
+        self.canvas_widget_controller = CanvasController(
+            self.project_data, 
+            self.canvas_widget,
+            self.signal_manager
+        )
 
-        self.toolbar_controller = ToolbarController(self.file_handler, self.project_data, self.toolbar, self.image_list_Widget_controller)
+        self.toolbar_controller = ToolbarController(
+            self.file_handler,
+            self.project_data,
+            self.toolbar,
+            self.image_list_Widget_controller,
+            self.label_list_Widget_controller
+        )
 
 
         self.setWindowTitle("标注工具")
